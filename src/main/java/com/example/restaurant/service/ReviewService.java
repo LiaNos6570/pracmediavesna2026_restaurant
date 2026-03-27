@@ -1,7 +1,9 @@
 package com.example.restaurant.service;
 
+import com.example.restaurant.dto.*;
 import com.example.restaurant.entity.Restaurant;
 import com.example.restaurant.entity.Review;
+import com.example.restaurant.mapper.ReviewMapper;
 import com.example.restaurant.repository.RestaurantRepository;
 import com.example.restaurant.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +19,24 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public void save(Review review) {
+    public ReviewResponseDTO save(ReviewRequestDTO dto) {
+        Review review = ReviewMapper.toEntity(dto);
+
         reviewRepository.save(review);
-        updateRestaurantRating(review.getRestaurantId());
+        updateRestaurantRating(dto.restaurantId());
+
+        return ReviewMapper.toDTO(review);
+    }
+
+    public List<ReviewResponseDTO> findAll() {
+        return reviewRepository.findAll().stream()
+                .map(ReviewMapper::toDTO)
+                .toList();
     }
 
     public void remove(Long visitorId, Long restaurantId) {
         reviewRepository.remove(visitorId, restaurantId);
         updateRestaurantRating(restaurantId);
-    }
-
-    public List<Review> findAll() {
-        return reviewRepository.findAll();
     }
 
     private void updateRestaurantRating(Long restaurantId) {
@@ -43,7 +51,9 @@ public class ReviewService {
                 .average()
                 .orElse(0);
 
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow();
+
         restaurant.setRating(BigDecimal.valueOf(avg));
     }
 }

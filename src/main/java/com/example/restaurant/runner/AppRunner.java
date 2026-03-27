@@ -1,6 +1,7 @@
 package com.example.restaurant.runner;
 
-import com.example.restaurant.entity.*;
+import com.example.restaurant.dto.*;
+import com.example.restaurant.entity.CuisineType;
 import com.example.restaurant.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -19,43 +20,38 @@ public class AppRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        // 👤 Посетители
-        visitorService.save(new Visitor(1L, "Alex", 25, "M"));
-        visitorService.save(new Visitor(2L, null, 30, "F")); // аноним
-        visitorService.save(new Visitor(3L, "John", 22, "M"));
-
-        // 🍕 Рестораны
-        restaurantService.save(new Restaurant(
+        //Пользователи
+        visitorService.save(
                 1L,
-                "Pizza Place",
-                "Italian food",
-                CuisineType.ITALIAN,
-                BigDecimal.valueOf(15),
-                BigDecimal.ZERO
-        ));
+                new VisitorRequestDTO("Alex", 25, "M")
+        );
 
-        restaurantService.save(new Restaurant(
+        visitorService.save(
                 2L,
-                "China Town",
-                "Chinese food",
-                CuisineType.CHINESE,
-                BigDecimal.valueOf(12),
-                BigDecimal.ZERO
-        ));
+                new VisitorRequestDTO(null, 30, "F")
+        );
 
-        // ⭐ Оценки
-        reviewService.save(new Review(1L, 1L, 5, "Top"));
-        reviewService.save(new Review(2L, 1L, 3, ""));
-        reviewService.save(new Review(3L, 1L, 4, "Good"));
+        //Рестораны
+        restaurantService.save(
+                1L,
+                new RestaurantRequestDTO(
+                        "Pizza Place",
+                        "Nice pizza",
+                        CuisineType.ITALIAN,
+                        BigDecimal.valueOf(15)
+                )
+        );
 
-        reviewService.save(new Review(1L, 2L, 2, "Not great"));
-        reviewService.save(new Review(2L, 2L, 5, "Perfect"));
+        //Отзывы
+        reviewService.save(
+                new ReviewRequestDTO(1L, 1L, 5, "Top")
+        );
 
-        // 📊 Вывод
-        System.out.println("=== РЕСТОРАНЫ ===");
+        reviewService.save(
+                new ReviewRequestDTO(2L, 1L, 3, "Normal")
+        );
+
+        //Проверка
         restaurantService.findAll().forEach(System.out::println);
-
-        System.out.println("=== ОТЗЫВЫ ===");
-        reviewService.findAll().forEach(System.out::println);
     }
 }
