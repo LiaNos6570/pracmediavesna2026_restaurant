@@ -1,11 +1,9 @@
 package com.example.restaurant.service;
 
 import com.example.restaurant.dto.*;
-import com.example.restaurant.entity.Restaurant;
-import com.example.restaurant.entity.Review;
-import com.example.restaurant.mapper.ReviewMapper;
-import com.example.restaurant.repository.RestaurantRepository;
-import com.example.restaurant.repository.ReviewRepository;
+import com.example.restaurant.entity.*;
+import com.example.restaurant.mapper.*;
+import com.example.restaurant.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,43 +15,40 @@ import java.util.List;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final VisitorRepository visitorRepository;
     private final RestaurantRepository restaurantRepository;
 
     public ReviewResponseDTO save(ReviewRequestDTO dto) {
-        Review review = ReviewMapper.toEntity(dto);
+
+        Visitor visitor = visitorRepository.findById(dto.visitorId()).orElseThrow();
+        Restaurant restaurant = restaurantRepository.findById(dto.restaurantId()).orElseThrow();
+
+        Review review = new Review(null, visitor, restaurant, dto.rating(), dto.text());
 
         reviewRepository.save(review);
-        updateRestaurantRating(dto.restaurantId());
+
+        updateRating(restaurant.getId());
 
         return ReviewMapper.toDTO(review);
     }
 
     public List<ReviewResponseDTO> findAll() {
-        return reviewRepository.findAll().stream()
-                .map(ReviewMapper::toDTO)
-                .toList();
+        return reviewRepository.findAll().stream().map(ReviewMapper::toDTO).toList();
     }
 
-    public void remove(Long visitorId, Long restaurantId) {
-        reviewRepository.remove(visitorId, restaurantId);
-        updateRestaurantRating(restaurantId);
+    public void remove(Long id) {
+        reviewRepository.deleteById(id);
     }
 
-    private void updateRestaurantRating(Long restaurantId) {
+    private void updateRating(Long restaurantId) {
         List<Review> reviews = reviewRepository.findAll().stream()
-                .filter(r -> r.getRestaurantId().equals(restaurantId))
+                .filter(r -> r.getRestaurant().getId().equals(restaurantId))
                 .toList();
 
-        if (reviews.isEmpty()) return;
+        double avg = reviews.stream().mapToInt(Review::getRating).average().orElse(0);
 
-        double avg = reviews.stream()
-                .mapToInt(Review::getRating)
-                .average()
-                .orElse(0);
-
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow();
-
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
         restaurant.setRating(BigDecimal.valueOf(avg));
+        restaurantRepository.save(restaurant);
     }
 }

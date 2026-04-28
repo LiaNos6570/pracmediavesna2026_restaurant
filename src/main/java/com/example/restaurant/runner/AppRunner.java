@@ -22,18 +22,15 @@ public class AppRunner implements CommandLineRunner {
 
         //Пользователи
         visitorService.save(
-                1L,
                 new VisitorRequestDTO("Alex", 25, "M")
         );
 
         visitorService.save(
-                2L,
                 new VisitorRequestDTO(null, 30, "F")
         );
 
-        //Рестораны
+        // 🍕 Рестораны
         restaurantService.save(
-                1L,
                 new RestaurantRequestDTO(
                         "Pizza Place",
                         "Nice pizza",

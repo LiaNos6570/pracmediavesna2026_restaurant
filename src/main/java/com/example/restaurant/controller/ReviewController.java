@@ -15,24 +15,18 @@ public class ReviewController {
 
     private final ReviewService service;
 
-    //Получить все отзывы
     @GetMapping
     public List<ReviewResponseDTO> getAll() {
         return service.findAll();
     }
 
-    //Добавить отзыв
     @PostMapping
     public ReviewResponseDTO create(@RequestBody @Valid ReviewRequestDTO dto) {
         return service.save(dto);
     }
 
-    //Удалить отзыв
-    @DeleteMapping
-    public void delete(
-            @RequestParam Long visitorId,
-            @RequestParam Long restaurantId
-    ) {
-        service.remove(visitorId, restaurantId);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.remove(id);
     }
 }

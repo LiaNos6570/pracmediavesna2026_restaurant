@@ -1,10 +1,8 @@
 package com.example.restaurant.service;
 
-import com.example.restaurant.dto.VisitorRequestDTO;
-import com.example.restaurant.dto.VisitorResponseDTO;
-import com.example.restaurant.entity.Visitor;
-import com.example.restaurant.mapper.VisitorMapper;
-import com.example.restaurant.repository.VisitorRepository;
+import com.example.restaurant.dto.*;
+import com.example.restaurant.mapper.*;
+import com.example.restaurant.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,19 +14,15 @@ public class VisitorService {
 
     private final VisitorRepository repository;
 
-    public VisitorResponseDTO save(Long id, VisitorRequestDTO dto) {
-        Visitor visitor = VisitorMapper.toEntity(id, dto);
-        repository.save(visitor);
-        return VisitorMapper.toDTO(visitor);
+    public VisitorResponseDTO save(VisitorRequestDTO dto) {
+        return VisitorMapper.toDTO(repository.save(VisitorMapper.toEntity(dto)));
     }
 
     public List<VisitorResponseDTO> findAll() {
-        return repository.findAll().stream()
-                .map(VisitorMapper::toDTO)
-                .toList();
+        return repository.findAll().stream().map(VisitorMapper::toDTO).toList();
     }
 
     public void remove(Long id) {
-        repository.remove(id);
+        repository.deleteById(id);
     }
 }

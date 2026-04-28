@@ -11,25 +11,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/restaurants")
 @RequiredArgsConstructor
-public class RestaurantController {
+    public class RestaurantController {
 
-    private final RestaurantService service;
+        private final RestaurantService service;
 
-    //Получить все рестораны
-    @GetMapping
-    public List<RestaurantResponseDTO> getAll() {
-        return service.findAll();
-    }
+        @GetMapping
+        public List<RestaurantResponseDTO> getAll() {
+            return service.findAll();
+        }
 
-    //Создать ресторан
-    @PostMapping
-    public RestaurantResponseDTO create(@RequestBody @Valid RestaurantRequestDTO dto) {
-        return service.save(System.currentTimeMillis(), dto);
-    }
+        @PostMapping
+        public RestaurantResponseDTO create(@RequestBody @Valid RestaurantRequestDTO dto) {
+            return service.save(dto);
+        }
 
-    //Удалить
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        service.remove(id);
-    }
+        @DeleteMapping("/{id}")
+        public void delete(@PathVariable Long id) {
+            service.remove(id);
+        }
 }

@@ -22,7 +22,7 @@ public class VisitorController {
 
     @PostMapping
     public VisitorResponseDTO create(@RequestBody @Valid VisitorRequestDTO dto) {
-        return service.save(System.currentTimeMillis(), dto);
+        return service.save(dto);
     }
 
     @DeleteMapping("/{id}")

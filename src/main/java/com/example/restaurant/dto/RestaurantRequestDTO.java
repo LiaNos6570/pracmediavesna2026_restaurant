@@ -7,8 +7,6 @@ import java.math.BigDecimal;
 public record RestaurantRequestDTO(
         @NotBlank String name,
         String description,
-        @NotNull
-        CuisineType cuisineType,
-        @NotNull
-        BigDecimal averageCheck
+        @NotNull CuisineType cuisineType,
+        @NotNull BigDecimal averageCheck
 ) {}

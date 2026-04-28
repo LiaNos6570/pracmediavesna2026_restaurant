@@ -5,19 +5,11 @@ import com.example.restaurant.entity.*;
 
 public class ReviewMapper {
 
-    public static Review toEntity(ReviewRequestDTO dto) {
-        return new Review(
-                dto.visitorId(),
-                dto.restaurantId(),
-                dto.rating(),
-                dto.text()
-        );
-    }
-
     public static ReviewResponseDTO toDTO(Review r) {
         return new ReviewResponseDTO(
-                r.getVisitorId(),
-                r.getRestaurantId(),
+                r.getId(),
+                r.getVisitor().getId(),
+                r.getRestaurant().getId(),
                 r.getRating(),
                 r.getText()
         );

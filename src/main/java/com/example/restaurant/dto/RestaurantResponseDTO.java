@@ -1,7 +1,6 @@
 package com.example.restaurant.dto;
 
 import com.example.restaurant.entity.CuisineType;
-
 import java.math.BigDecimal;
 
 public record RestaurantResponseDTO(
